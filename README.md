@@ -70,6 +70,16 @@ uv run echolabs rank my_songs/ --top 10
 uv run echolabs mashup vocals_song.mp3 beat_song.mp3 -o outputs/mashup.wav --mode beatwarp
 ```
 
+### Web demo
+
+A Gradio app in [`space/`](space/) lets anyone upload two songs and download the mashup with its provenance manifest. It caps each song at 60 s (`ECHOLABS_MAX_SECONDS`) because separation runs at about real time on a CPU, and it requires the uploader to confirm they have the rights to remix both recordings.
+
+```bash
+uv run --extra demo python space/app.py   # http://localhost:7860
+```
+
+The same folder is deployable as-is to a Hugging Face Space (Gradio SDK, CPU basic).
+
 Reproduce the evaluations:
 
 ```bash

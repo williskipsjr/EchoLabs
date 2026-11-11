@@ -44,7 +44,7 @@ def separate_array(mix: np.ndarray, model_name: str = "htdemucs", shifts: int = 
     return {name: out[i].numpy().astype(np.float32) for i, name in enumerate(model.sources)}
 
 
-def _file_hash(path: Path) -> str:
+def file_hash(path: Path) -> str:
     h = hashlib.sha1()
     with open(path, "rb") as f:
         for chunk in iter(lambda: f.read(1 << 20), b""):
@@ -52,13 +52,21 @@ def _file_hash(path: Path) -> str:
     return h.hexdigest()[:16]
 
 
-def separate_file(path: str | Path, model_name: str = "htdemucs") -> dict[str, np.ndarray]:
-    """Separate a file, reusing cached stems when the same file was seen before."""
+def separate_file(path: str | Path, model_name: str = "htdemucs", max_seconds: float | None = None) -> dict[str, np.ndarray]:
+    """Separate a file, reusing cached stems when the same file was seen before.
+
+    `max_seconds` keeps only the start of the song, which bounds CPU time
+    (the web demo uses it; separation runs at roughly real time on a CPU).
+    """
     path = Path(path)
-    cache = CACHE_DIR / f"{_file_hash(path)}_{model_name}"
+    suffix = f"_{int(max_seconds)}s" if max_seconds else ""
+    cache = CACHE_DIR / f"{file_hash(path)}_{model_name}{suffix}"
     if all((cache / f"{s}.wav").exists() for s in STEMS):
         return {s: A.load(cache / f"{s}.wav") for s in STEMS}
-    stems = separate_array(A.load(path), model_name)
+    mix = A.load(path)
+    if max_seconds:
+        mix = np.ascontiguousarray(mix[:, : int(max_seconds * A.SR)])
+    stems = separate_array(mix, model_name)
     for name, wav in stems.items():
         A.save(cache / f"{name}.wav", wav)
     return stems
