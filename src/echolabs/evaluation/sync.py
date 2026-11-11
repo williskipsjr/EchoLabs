@@ -8,6 +8,10 @@ vocals, re-track beats on the warped drums, and score them against B's beats:
   * key relation between transposed A (bass + other) and B, re-estimated on
     the warped audio: fraction of pairs that clash on the Camelot wheel
 
+Each beat tracker plans the warp on the same pairs; the judge is fixed. A
+self-warp run (a song onto itself, ideal = identity) measures the metric's
+noise floor, i.e. the best score any method could get from this judge.
+
 Ground-truth MUSDB stems are used so this isolates the sync stage from
 separation errors (separation is benchmarked in `evaluation/separation.py`).
 """
@@ -52,58 +56,85 @@ def _score_pair(sa, a, sb, b, m, mode) -> dict:
     return {"f_measure": float(f), "offset_ms": float(np.mean(offsets)), "key_relation": rel}
 
 
-def run(root: str, n_pairs: int, seed: int, out: Path) -> dict:
+def _summarise(rows: list[dict], prefix: str) -> dict:
+    ok = [r for r in rows if f"{prefix}/f_measure" in r]
+    rels = [r[f"{prefix}/key_relation"] for r in ok if r[f"{prefix}/key_relation"] != "n/a"]
+    return {
+        "mean_beat_f_measure": round(float(np.mean([r[f"{prefix}/f_measure"] for r in ok])), 3),
+        "mean_offset_ms": round(float(np.nanmean([r[f"{prefix}/offset_ms"] for r in ok])), 1),
+        "key_clash_rate": round(rels.count("clash") / len(rels), 3) if rels else None,
+        "n": len(ok),
+    }
+
+
+def run(root: str, n_pairs: int, seed: int, trackers: list[str], n_ceiling: int, out: Path) -> dict:
     db = musdb.DB(root=root)
     by_name = {t.name: t for t in db.tracks}
     # Stems for all 144 clips would need ~1.4 GB, so analyse one at a time and reload on demand.
-    ana, singing = {}, set()
+    ana = {tr: {} for tr in trackers}
+    singing = set()
     for name, t in tqdm(by_name.items(), desc="analyse"):
         s = _stems(t)
-        ana[name] = analyze.analyze_stems(s)
+        for tr in trackers:
+            ana[tr][name] = analyze.analyze_stems(s, tracker=tr)
         if A.loudness(s["vocals"]) > -35:
             singing.add(name)
 
-    # Vocal source must actually contain singing; tempo gap must be DJ-plausible.
+    # Pairs are chosen once, from the first tracker's tempos, so every tracker is
+    # scored on exactly the same pairs. Vocal source must contain singing and the
+    # tempo gap must be DJ-plausible.
+    ref = ana[trackers[0]]
     candidates = []
     for va in sorted(singing):
-        for ib in sorted(ana):
-            if va == ib or len(ana[va].beats) < 6 or len(ana[ib].beats) < 6:
+        for ib in sorted(ref):
+            if va == ib or len(ref[va].beats) < 6 or len(ref[ib].beats) < 6:
                 continue
-            m = match.match(ana[va], ana[ib])
-            if 0.85 <= m.stretch <= 1.18:
-                candidates.append((va, ib, m))
+            if 0.85 <= match.match(ref[va], ref[ib]).stretch <= 1.18:
+                candidates.append((va, ib))
     random.Random(seed).shuffle(candidates)
     pairs = candidates[:n_pairs]
 
     rows = []
-    for va, ib, m in tqdm(pairs, desc="pairs"):
+    for va, ib in tqdm(pairs, desc="pairs"):
         sa, sb = _stems(by_name[va]), _stems(by_name[ib])
-        row = {"vocals_from": va, "beat_from": ib, "stretch": round(m.stretch, 3), "semitones": m.semitones}
-        for mode in remix.MODES:
-            try:
-                for k, v in _score_pair(sa, ana[va], sb, ana[ib], m, mode).items():
-                    row[f"{mode}/{k}"] = v
-            except ValueError as e:  # too few beats to align
-                row[f"{mode}/error"] = str(e)
+        row = {"vocals_from": va, "beat_from": ib}
+        for tr in trackers:
+            m = match.match(ana[tr][va], ana[tr][ib])
+            row[f"{tr}/stretch"], row[f"{tr}/semitones"] = round(m.stretch, 3), m.semitones
+            for mode in remix.MODES:
+                try:
+                    for k, v in _score_pair(sa, ana[tr][va], sb, ana[tr][ib], m, mode).items():
+                        row[f"{tr}/{mode}/{k}"] = v
+                except ValueError as e:  # too few beats to align
+                    row[f"{tr}/{mode}/error"] = str(e)
         rows.append(row)
 
-    summary = {}
-    for mode in remix.MODES:
-        ok = [r for r in rows if f"{mode}/f_measure" in r]
-        rels = [r[f"{mode}/key_relation"] for r in ok if r[f"{mode}/key_relation"] != "n/a"]
-        summary[mode] = {
-            "mean_beat_f_measure": round(float(np.mean([r[f"{mode}/f_measure"] for r in ok])), 3),
-            "mean_offset_ms": round(float(np.nanmean([r[f"{mode}/offset_ms"] for r in ok])), 1),
-            "key_clash_rate": round(rels.count("clash") / len(rels), 3) if rels else None,
-            "n_pairs": len(ok),
-        }
+    # Noise floor of the metric: warp a song onto itself (ideal = identity) and
+    # see what the judge reports. No sync method can score above this.
+    ceiling_rows = []
+    for name in random.Random(seed + 1).sample(sorted(singing), min(n_ceiling, len(singing))):
+        s = _stems(by_name[name])
+        row = {"track": name}
+        for tr in trackers:
+            a = ana[tr][name]
+            if len(a.beats) >= 6:
+                for k, v in _score_pair(s, a, s, a, match.match(a, a), "beatwarp").items():
+                    row[f"{tr}/self/{k}"] = v
+        ceiling_rows.append(row)
 
+    summary = {
+        tr: {mode: _summarise(rows, f"{tr}/{mode}") for mode in remix.MODES}
+        | {"self_warp_ceiling": _summarise(ceiling_rows, f"{tr}/self")}
+        for tr in trackers
+    }
     result = {
         "dataset": "MUSDB18 7 s sample (ground-truth stems), random DJ-plausible pairs",
+        "judge": "librosa beat tracker (hop 128) on warped A drums vs B drums, +-70 ms F-measure",
         "n_candidate_pairs": len(candidates),
         "seed": seed,
         "summary": summary,
         "pairs": rows,
+        "ceiling": ceiling_rows,
     }
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result, indent=2))
@@ -115,10 +146,12 @@ def main() -> None:
     p.add_argument("--root", default="data/musdb18_sample")
     p.add_argument("--pairs", type=int, default=100)
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--trackers", nargs="+", choices=analyze.TRACKERS, default=list(analyze.TRACKERS))
+    p.add_argument("--ceiling-tracks", type=int, default=30)
     p.add_argument("--out", type=Path, default=Path("results/sync.json"))
     args = p.parse_args()
-    r = run(args.root, args.pairs, args.seed, args.out)
-    print(json.dumps({k: v for k, v in r.items() if k != "pairs"}, indent=2))
+    r = run(args.root, args.pairs, args.seed, args.trackers, args.ceiling_tracks, args.out)
+    print(json.dumps({k: v for k, v in r.items() if k not in ("pairs", "ceiling")}, indent=2))
 
 
 if __name__ == "__main__":
