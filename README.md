@@ -97,7 +97,7 @@ A Gradio app in [`space/`](space/) lets anyone upload two songs and download the
 uv run --extra demo python space/app.py   # http://localhost:7860
 ```
 
-The same folder is deployable as-is to a Hugging Face Space (Gradio SDK, CPU basic).
+Deploy it to a Hugging Face Space (Gradio SDK, free CPU tier) with `uv run hf auth login` then `uv run python scripts/deploy_space.py`.
 
 Reproduce the evaluations:
 
