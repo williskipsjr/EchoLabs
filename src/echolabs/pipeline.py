@@ -64,6 +64,7 @@ def mashup(
     a_path, b_path = Path(vocals_from), Path(beat_from)
     a_stems, a = analyse_file(a_path, max_seconds)
     b_stems, b = analyse_file(b_path, max_seconds)
-    m = match.match(a, b, transpose=transpose)
+    # Naive mode applies no pitch shift, so score the key relation of the untouched audio.
+    m = match.match(a, b, transpose=transpose and mode != "naive")
     mix, plan = remix.render(a_stems, a, b_stems, b, m, mode=mode, intro_bars=intro_bars)
     return MashupResult(mix, build_manifest(a_path, b_path, a, b, m, plan, mix), a, b)
