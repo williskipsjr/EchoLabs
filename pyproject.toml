@@ -40,7 +40,15 @@ explicit = true
 dev = [
     "mirdata>=1.0.0",
     "pytest>=9.2.0",
+    "ruff>=0.17.4",
 ]
 
 [project.scripts]
 remixlab = "remixlab.cli:main"
+
+[tool.ruff]
+line-length = 130
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
