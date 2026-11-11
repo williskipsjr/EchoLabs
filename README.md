@@ -29,17 +29,17 @@ Benchmarks are running; numbers land here as they finish:
 
 ```bash
 uv sync
-uv run remixlab analyze song.mp3
-uv run remixlab rank my_songs/ --top 10
-uv run remixlab mashup vocals_song.mp3 beat_song.mp3 -o outputs/mashup.wav --mode beatwarp
+uv run echolabs analyze song.mp3
+uv run echolabs rank my_songs/ --top 10
+uv run echolabs mashup vocals_song.mp3 beat_song.mp3 -o outputs/mashup.wav --mode beatwarp
 ```
 
 Reproduce the evaluations:
 
 ```bash
-uv run python -m remixlab.evaluation.separation   # MUSDB18 sample downloads automatically (~140 MB)
-uv run python -m remixlab.evaluation.sync --pairs 100
-uv run python -m remixlab.evaluation.key          # needs GiantSteps Key (see below)
+uv run python -m echolabs.evaluation.separation   # MUSDB18 sample downloads automatically (~140 MB)
+uv run python -m echolabs.evaluation.sync --pairs 100
+uv run python -m echolabs.evaluation.key          # needs GiantSteps Key (see below)
 uv run pytest
 ```
 
@@ -49,4 +49,4 @@ Everything runs on a CPU; no GPU was used.
 
 ## Using music responsibly
 
-Remixing someone else's recording is creative work built on theirs. RemixLab is a research tool: use it on music you own, music released for remixing (e.g. Creative Commons stems and a cappellas on ccMixter), or research datasets. Every output carries a provenance manifest naming its sources so the original artists can be credited.
+Remixing someone else's recording is creative work built on theirs. EchoLabs is a research tool: use it on music you own, music released for remixing (e.g. Creative Commons stems and a cappellas on ccMixter), or research datasets. Every output carries a provenance manifest naming its sources so the original artists can be credited.

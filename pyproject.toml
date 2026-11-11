@@ -1,5 +1,5 @@
 [project]
-name = "remixlab"
+name = "echolabs"
 version = "0.1.0"
 description = "Stem-aware AI mashup engine: separate, analyse, match and remix songs"
 readme = "README.md"
@@ -44,7 +44,7 @@ dev = [
 ]
 
 [project.scripts]
-remixlab = "remixlab.cli:main"
+echolabs = "echolabs.cli:main"
 
 [tool.ruff]
 line-length = 130

@@ -1,7 +1,7 @@
 """Benchmark source separation on the MUSDB18 test split (BSSEval v4 SDR).
 
 Three systems are compared on the same clips:
-  * htdemucs   - the deep model RemixLab uses
+  * htdemucs   - the deep model EchoLabs uses
   * repet_sim  - classic signal-processing baseline (vocals / accompaniment only)
   * oracle_irm - ideal ratio mask computed from the true stems: an upper bound
                  for any mask-based separator, not a real system

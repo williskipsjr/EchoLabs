@@ -3,8 +3,8 @@
 import numpy as np
 import pytest
 
-from remixlab import analyze, match, remix
-from remixlab.audio import SR
+from echolabs import analyze, match, remix
+from echolabs.audio import SR
 
 NOTE = {n: i for i, n in enumerate(analyze.PITCHES)}
 NOTE.update({"Db": 1, "D#": 3, "G#": 8, "A#": 10})

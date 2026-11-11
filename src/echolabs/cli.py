@@ -1,4 +1,4 @@
-"""Command line: `remixlab analyze`, `remixlab rank`, `remixlab mashup`."""
+"""Command line: `echolabs analyze`, `echolabs rank`, `echolabs mashup`."""
 
 from __future__ import annotations
 
@@ -47,7 +47,7 @@ def cmd_mashup(args) -> None:
     A.save(out, mix)
     # Provenance: who the music came from and exactly what was done to it.
     manifest = {
-        "generated_by": f"RemixLab {__version__}",
+        "generated_by": f"EchoLabs {__version__}",
         "created_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "ai_generated_derivative": True,
         "sources": {
@@ -65,7 +65,7 @@ def cmd_mashup(args) -> None:
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(prog="remixlab", description="Stem-aware AI mashup engine")
+    p = argparse.ArgumentParser(prog="echolabs", description="Stem-aware AI mashup engine")
     sub = p.add_subparsers(required=True)
 
     s = sub.add_parser("analyze", help="tempo, beats, downbeat and key of songs")

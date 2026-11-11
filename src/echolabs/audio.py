@@ -1,4 +1,4 @@
-"""Audio I/O helpers. All audio inside RemixLab is float32, shape (channels, samples)."""
+"""Audio I/O helpers. All audio inside EchoLabs is float32, shape (channels, samples)."""
 
 from __future__ import annotations
 
