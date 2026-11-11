@@ -39,8 +39,10 @@ def separate_array(mix: np.ndarray, model_name: str = "htdemucs", shifts: int = 
     mean, std = ref.mean(), ref.std() + 1e-8
     wav = (wav - mean) / std
     with torch.inference_mode():
-        out = apply_model(model, wav[None], shifts=shifts, split=True, overlap=0.25, progress=False)[0]
-    out = out * std + mean
+        # Use a GPU when one exists (e.g. Colab); separation is ~real time on CPU.
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        out = apply_model(model, wav[None], shifts=shifts, split=True, overlap=0.25, progress=False, device=device)[0]
+    out = out.cpu() * std + mean
     return {name: out[i].numpy().astype(np.float32) for i, name in enumerate(model.sources)}
 
 
