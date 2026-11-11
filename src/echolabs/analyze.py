@@ -8,11 +8,14 @@ key is estimated on bass + other (no drums adding noise to the chroma).
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from functools import lru_cache
 
 import librosa
 import numpy as np
 
 from . import audio as A
+
+TRACKERS = ("beatthis", "librosa")
 
 PITCHES = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"]
 
@@ -99,14 +102,47 @@ def track_beats(drums: np.ndarray, sr: int = A.SR, start_bpm: float = 120.0, hop
         onset_envelope=onset_env, sr=22050, hop_length=hop, start_bpm=start_bpm, units="frames"
     )
     beats = librosa.frames_to_time(frames, sr=22050, hop_length=hop)
-    tempo = float(np.atleast_1d(tempo)[0])
-    # Tempo = slope of a straight line through the beat times. Individual beat
-    # times are quantised to the hop size; the fit averages that error away
-    # (a median inter-beat interval at hop 512 was off by ~2% at 120 BPM).
+    return _tempo_from_beats(beats, fallback=float(np.atleast_1d(tempo)[0])), beats
+
+
+def _tempo_from_beats(beats: np.ndarray, fallback: float = 120.0) -> float:
+    """Tempo = slope of a straight line through the beat times.
+
+    Individual beat times are quantised to the analysis hop; the fit averages
+    that error away (a median inter-beat interval at hop 512 was off by ~2% at 120 BPM).
+    """
     if len(beats) > 3:
-        slope = np.polyfit(np.arange(len(beats)), beats, 1)[0]
-        tempo = 60.0 / float(slope)
-    return tempo, beats
+        return 60.0 / float(np.polyfit(np.arange(len(beats)), beats, 1)[0])
+    return fallback
+
+
+@lru_cache(maxsize=1)
+def _beat_this():
+    try:
+        from beat_this.inference import Audio2Beats
+    except ImportError as e:
+        raise ImportError("tracker='beatthis' needs the neural extra: uv sync --extra neural") from e
+
+    return Audio2Beats(checkpoint_path="final0", device="cpu", dbn=False)
+
+
+def track_beats_neural(mix: np.ndarray, sr: int = A.SR) -> tuple[float, np.ndarray, np.ndarray]:
+    """Beats and downbeats from Beat This! (Foscarin et al., ISMIR 2024).
+
+    Run it on the full mix: it was trained on mixtures, and on an isolated
+    drum stem it tends to lock onto double tempo.
+    """
+    beats, downbeats = _beat_this()(A.to_mono(mix), sr)
+    beats, downbeats = np.asarray(beats, dtype=float), np.asarray(downbeats, dtype=float)
+    return _tempo_from_beats(beats), beats, downbeats
+
+
+def _phase_from_downbeats(beats: np.ndarray, downbeats: np.ndarray, tol: float = 0.07) -> int | None:
+    """Index (mod 4) of the first beat that the model also marked as a downbeat."""
+    for i, t in enumerate(beats):
+        if len(downbeats) and np.min(np.abs(downbeats - t)) < tol:
+            return i % 4
+    return None
 
 
 def downbeat_phase(beats: np.ndarray, low_end: np.ndarray, sr: int = A.SR) -> int:
@@ -126,9 +162,19 @@ def downbeat_phase(beats: np.ndarray, low_end: np.ndarray, sr: int = A.SR) -> in
     return int(np.argmax([strength[p::4].mean() for p in range(4)]))
 
 
-def analyze_stems(stems: dict[str, np.ndarray], sr: int = A.SR, key_profile: str = "krumhansl") -> Analysis:
-    tempo, beats = track_beats(stems["drums"], sr)
-    phase = downbeat_phase(beats, stems["drums"] + stems["bass"], sr)
+def analyze_stems(
+    stems: dict[str, np.ndarray], sr: int = A.SR, key_profile: str = "krumhansl", tracker: str = "librosa"
+) -> Analysis:
+    if tracker not in TRACKERS:
+        raise ValueError(f"tracker must be one of {TRACKERS}")
+    phase = None
+    if tracker == "beatthis":
+        tempo, beats, downbeats = track_beats_neural(sum(stems.values()), sr)
+        phase = _phase_from_downbeats(beats, downbeats)
+    if tracker == "librosa" or len(beats) < 4:
+        tempo, beats = track_beats(stems["drums"], sr)
+    if phase is None:
+        phase = downbeat_phase(beats, stems["drums"] + stems["bass"], sr)
     key = estimate_key(stems["bass"] + stems["other"], sr, key_profile)
     return Analysis(tempo, beats, phase, key, stems["drums"].shape[-1] / sr)
 

@@ -50,6 +50,9 @@ echolabs = "echolabs.cli:main"
 demo = [
     "gradio>=6.31.0",
 ]
+neural = [
+    "beat-this>=1.1",
+]
 
 [tool.ruff]
 line-length = 130
