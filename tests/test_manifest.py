@@ -32,3 +32,13 @@ def test_manifest_records_sources_and_transformations(tmp_path):
     assert manifest["match"]["stretch"] == round(110 / 100, 3)
     assert manifest["plan"]["mode"] == "beatwarp"
     json.dumps(manifest)  # must be serialisable as written next to the audio
+
+
+def test_plan_reports_the_stretch_actually_applied():
+    a, b = _analysis(100), _analysis(110)
+    m = match.match(a, b)
+    vocals = np.zeros((2, 8 * SR), dtype=np.float32)
+    naive = remix.make_plan(vocals, a, b, m, mode="naive", intro_bars=1).summary()
+    glob = remix.make_plan(vocals, a, b, m, mode="global", intro_bars=1).summary()
+    assert naive["mean_stretch_applied"] == 1.0 and naive["semitones"] == 0
+    assert glob["mean_stretch_applied"] == round(m.stretch, 3)

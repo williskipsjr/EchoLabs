@@ -38,6 +38,10 @@ class Plan:
             "a_segment_s": [round(self.a_start, 2), round(self.a_end, 2)],
             "vocals_enter_at_s": round(self.out_start, 2),
             "semitones": self.semitones,
+            # What was actually done, as opposed to what Match recommended.
+            "mean_stretch_applied": round(
+                (self.knots_a[-1] - self.knots_a[0]) / max(self.knots_out[-1] - self.knots_out[0], 1e-6), 3
+            ),
             "n_warp_segments": len(self.knots_a) - 1,
         }
 
