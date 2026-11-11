@@ -2,6 +2,8 @@
 
 Give EchoLabs two songs. It separates them into stems, works out their tempo, beat grid and key, decides how one has to be stretched and transposed to fit the other, and renders **song A's vocals over song B's instrumental**, locked to B's beats.
 
+**Try it:** [live demo on Hugging Face Spaces](https://huggingface.co/spaces/mairrack/EchoLabs). It includes one-click examples that mash up two Creative Commons tracks from ccMixter, in both beat-warp and naive-overlay modes, so you can hear the difference.
+
 ```
 song A ─┐                     ┌─ tempo, beats, downbeat ─┐
         ├─ Demucs separation ─┤                          ├─ match ─ beat-warp + transpose ─ mix ─ remix.wav
@@ -15,7 +17,7 @@ song B ─┘   (htdemucs)        └─ key (chroma × profiles) ┘  (stretch,
 | Analyse | Beats tracked on the **drum stem only**, tempo from a least-squares fit of the beat grid, downbeat phase from low-frequency onset energy, key from energy-weighted chroma correlated with 24 rotated key profiles on **bass + other** (no drums) | `analyze.py` |
 | Match | Half/double-time detection, stretch factor, smallest transposition that lands on a compatible Camelot key, and a 0–1 mashup-difficulty score used to rank every pairing in a library | `match.py` |
 | Remix | **Beat-warp**: every beat interval of A is stretched onto the matching beat interval of B (time-varying Rubber Band stretch), so A follows B's tempo drift; vocal chain (high-pass, light reverb), mid-range ducking of B while A sings, LUFS loudness matching, limiter | `remix.py` |
-| Provenance | Every render writes a JSON manifest: source files and hashes, analysis, every transformation applied, and an explicit *AI-generated derivative* flag | `cli.py` |
+| Provenance | Every render writes a JSON manifest: source files and hashes, analysis, the match it recommended, the stretch and transposition it actually applied, and an explicit *AI-generated derivative* flag | `pipeline.py` |
 
 ## Results
 
@@ -113,3 +115,10 @@ Everything runs on a CPU; no GPU was used.
 ## Using music responsibly
 
 Remixing someone else's recording is creative work built on theirs. EchoLabs is a research tool: use it on music you own, music released for remixing (e.g. Creative Commons stems and a cappellas on ccMixter), or research datasets. Every output carries a provenance manifest naming its sources so the original artists can be credited.
+
+**Demo credits.** The example songs are used under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/):
+
+- "EL MANNY QUIERE MONEY" by Gabriel Shellington ([ccMixter](https://ccmixter.org/files/gabriel_shelligton/71296))
+- "Same block, new bodies (ft. Synomo, IAComplexe)" by MalreDeszik ([ccMixter](https://ccmixter.org/files/MalreDeszik/71346))
+
+See [`space/examples/ATTRIBUTION.md`](space/examples/ATTRIBUTION.md).
