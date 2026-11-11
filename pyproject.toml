@@ -46,6 +46,11 @@ dev = [
 [project.scripts]
 echolabs = "echolabs.cli:main"
 
+[project.optional-dependencies]
+demo = [
+    "gradio>=6.31.0",
+]
+
 [tool.ruff]
 line-length = 130
 target-version = "py311"
