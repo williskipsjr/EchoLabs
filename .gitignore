@@ -5,3 +5,4 @@ data/
 outputs/
 results/*.log
 *.tex
+.claude/
