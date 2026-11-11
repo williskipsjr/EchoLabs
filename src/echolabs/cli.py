@@ -51,8 +51,8 @@ def cmd_mashup(args) -> None:
         "created_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "ai_generated_derivative": True,
         "sources": {
-            "vocals": {"file": a_path.name, "sha1_16": separate._file_hash(a_path), "analysis": a.summary()},
-            "instrumental": {"file": b_path.name, "sha1_16": separate._file_hash(b_path), "analysis": b.summary()},
+            "vocals": {"file": a_path.name, "sha1_16": separate.file_hash(a_path), "analysis": a.summary()},
+            "instrumental": {"file": b_path.name, "sha1_16": separate.file_hash(b_path), "analysis": b.summary()},
         },
         "match": m.summary(),
         "plan": plan.summary(),
