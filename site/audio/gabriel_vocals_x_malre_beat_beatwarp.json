@@ -1,0 +1,57 @@
+{
+  "generated_by": "EchoLabs 0.1.0",
+  "created_utc": "2026-11-11T22:18:02+00:00",
+  "ai_generated_derivative": true,
+  "sources": {
+    "vocals": {
+      "file": "el_manny_quiere_money.mp3",
+      "sha1_16": "c0315fec661f5234",
+      "analysis": {
+        "tempo_bpm": 139.99,
+        "n_beats": 61,
+        "downbeat_phase": 2,
+        "key": "G minor",
+        "camelot": "6A",
+        "key_confidence": 0.084,
+        "duration_s": 61.3
+      }
+    },
+    "instrumental": {
+      "file": "same_block_new_bodies.mp3",
+      "sha1_16": "6ed1f661d6b1467c",
+      "analysis": {
+        "tempo_bpm": 141.88,
+        "n_beats": 254,
+        "downbeat_phase": 3,
+        "key": "E minor",
+        "camelot": "9A",
+        "key_confidence": 0.031,
+        "duration_s": 122.8
+      }
+    }
+  },
+  "match": {
+    "tempo_multiplier": 1.0,
+    "stretch": 1.013,
+    "semitones": -3,
+    "key_relation": "same",
+    "score": 0.423
+  },
+  "plan": {
+    "mode": "beatwarp",
+    "a_segment_s": [
+      1.31,
+      26.59
+    ],
+    "vocals_enter_at_s": 18.82,
+    "semitones": -3,
+    "mean_stretch_applied": 1.013,
+    "n_warp_segments": 59
+  },
+  "output_lufs": -14.0,
+  "note": "Only remix music you have the rights to use. Credit the original artists.",
+  "excerpt_s": [
+    12.82,
+    42.82
+  ]
+}
