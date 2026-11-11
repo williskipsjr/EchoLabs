@@ -18,6 +18,7 @@ from echolabs import pipeline, remix
 
 # Separation runs at roughly real time on a CPU, so cap how much of each song is used.
 MAX_SECONDS = float(os.environ.get("ECHOLABS_MAX_SECONDS", 60))
+EXAMPLES = Path(__file__).parent / "examples"
 
 MODE_LABELS = {
     "Beat-warp (follows every beat)": "beatwarp",
@@ -97,6 +98,20 @@ with gr.Blocks(title="EchoLabs: AI mashup engine") as demo:
         run,
         inputs=[vocals_in, beat_in, mode_in, transpose_in, intro_in, rights_in],
         outputs=[mix_out, info_out, manifest_out],
+    )
+
+    # CC BY 4.0 songs from ccMixter; see examples/ATTRIBUTION.md. Compare the
+    # same pair with beat-warp and with the naive overlay to hear the difference.
+    beatwarp, naive = list(MODE_LABELS)[0], list(MODE_LABELS)[2]
+    gabriel, malre = str(EXAMPLES / "el_manny_quiere_money.mp3"), str(EXAMPLES / "same_block_new_bodies.mp3")
+    gr.Examples(
+        examples=[
+            [gabriel, malre, beatwarp, True, 2, True],
+            [gabriel, malre, naive, False, 2, True],
+            [malre, gabriel, beatwarp, True, 2, True],
+        ],
+        inputs=[vocals_in, beat_in, mode_in, transpose_in, intro_in, rights_in],
+        label="Examples: Gabriel Shellington × MalreDeszik (CC BY 4.0, via ccMixter)",
     )
     gr.Markdown(
         "Every mashup comes with a provenance file naming its source recordings and marking the output as an "
