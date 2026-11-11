@@ -1,0 +1,46 @@
+[project]
+name = "remixlab"
+version = "0.1.0"
+description = "Stem-aware AI mashup engine: separate, analyse, match and remix songs"
+readme = "README.md"
+authors = [
+    { name = "Willis Kipgen", email = "itswilliskipsjr@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "demucs>=4.0.1",
+    "librosa>=0.11.0",
+    "mir-eval>=0.8.2",
+    "musdb>=0.4.3",
+    "museval>=0.4.1",
+    "numpy>=2.4.6",
+    "pedalboard>=0.9.26",
+    "pyloudnorm>=0.2.0",
+    "soundfile>=0.14.0",
+    "torch>=2.4",
+    "torchaudio>=2.4",
+    "tqdm>=4.70.1",
+    "transformers>=4.44",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.1,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+torchaudio = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[dependency-groups]
+dev = [
+    "mirdata>=1.0.0",
+    "pytest>=9.2.0",
+]
+
+[project.scripts]
+remixlab = "remixlab.cli:main"
