@@ -57,9 +57,26 @@ In the best configuration, 23% of errors land on an unrelated key and 14% confus
 
 Labels with mode qualifiers (e.g. "F minor aeolian") are reduced to major/minor. The 34 tracks labelled "other" or with no key are excluded.
 
-### 3. Sync ablation
+### 3. Sync ablation (100 random song pairs from MUSDB18)
 
-Results for naive overlay vs global stretch vs per-beat warp, comparing the librosa and Beat This! beat trackers, come with the beat-tracker PR.
+For each pair, song A's drum stem is warped with exactly the plan used for its vocals. Its beats are then re-detected and scored against song B's beats: beat F-measure at ±70 ms, with a fixed librosa-based judge. Ground-truth stems are used here so that separation errors don't confound the sync result. Pairs were filtered to tempo gaps a DJ would plausibly mix, i.e. a stretch factor between 0.85 and 1.18.
+
+| Beat tracker | Naive overlay | Global stretch | **Beat-warp** | Self-warp ceiling |
+|---|---|---|---|---|
+| librosa (default) | 0.365 | 0.525 | **0.591** | 0.706 |
+| Beat This! (neural, optional) | 0.326 | 0.480 | 0.518 | 0.709 |
+
+Key-clash rate (Camelot), measured on the warped audio: **89% for the naive overlay → 34% with transposition**.
+
+What the numbers support (paired bootstrap, 95% CI):
+
+- **Global stretch beats naive overlay**: +0.160 [+0.106, +0.212].
+- **Beat-warp beats global stretch**: +0.066 [+0.019, +0.114]. Following every beat interval pays off over one constant tempo ratio.
+- **The neural tracker did not help**: librosa beat-warp minus Beat This! beat-warp is +0.073 [−0.004, +0.153]. On these 7 s clips the two trackers agree on tempo within 3% for only 52% of pairs. Part of the gap may also come from the judge being librosa-based. Beat This! therefore stays an optional extra (`uv sync --extra neural`).
+
+The **self-warp ceiling** is a song warped onto itself, where the ideal answer is "change nothing". It shows the judge itself is noisy on 7 s clips, at about 0.71. Read every score against that ceiling rather than against 1.0.
+
+On a synthetic click track with known ground truth (`tests/test_pipeline.py`), beat-warp lands each click 11–15 ms from its target, and the test asserts a mean offset under 20 ms. That is below the ~20 ms threshold where two hits start to sound like a "flam". The Rubber Band stretcher itself adds under 5 ms.
 
 ## Usage
 
