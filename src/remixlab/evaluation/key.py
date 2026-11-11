@@ -59,7 +59,8 @@ def run(data_home: str, limit: int | None, workers: int, out: Path) -> dict:
 
     rows = []
     with ProcessPoolExecutor(max_workers=workers) as pool:
-        for (tid, _, label), preds in tqdm(zip(tracks, pool.map(_predict, [p for _, p, _ in tracks])), total=len(tracks)):
+        predictions = pool.map(_predict, [p for _, p, _ in tracks])
+        for (tid, _, label), preds in tqdm(zip(tracks, predictions, strict=True), total=len(tracks)):
             row = {"track": tid, "label": label}
             for cond, est in preds.items():
                 row[cond] = est

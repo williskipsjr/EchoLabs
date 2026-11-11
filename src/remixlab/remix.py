@@ -175,7 +175,12 @@ def render(
     vocals = apply_plan(a_stems["vocals"], plan)
 
     # Light vocal chain: remove bleed rumble, a touch of room to glue it to the new beat.
-    vocal_fx = pb.Pedalboard([pb.HighpassFilter(cutoff_frequency_hz=120), pb.Reverb(room_size=0.25, wet_level=0.08, dry_level=1.0)])
+    vocal_fx = pb.Pedalboard(
+        [
+            pb.HighpassFilter(cutoff_frequency_hz=120),
+            pb.Reverb(room_size=0.25, wet_level=0.08, dry_level=1.0),
+        ]
+    )
     vocals = vocal_fx(vocals, A.SR)
 
     duck = _duck(vocals)
