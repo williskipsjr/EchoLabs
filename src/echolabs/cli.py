@@ -47,7 +47,7 @@ def cmd_mashup(args) -> None:
     A.save(out, mix)
     # Provenance: who the music came from and exactly what was done to it.
     manifest = {
-        "generated_by": f"RemixLab {__version__}",
+        "generated_by": f"EchoLabs {__version__}",
         "created_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "ai_generated_derivative": True,
         "sources": {
