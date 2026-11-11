@@ -1,5 +1,7 @@
 # EchoLabs: stem-aware AI mashup engine
 
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/williskipsjr/EchoLabs/blob/main/notebooks/echolabs_demo.ipynb)
+
 Give EchoLabs two songs. It separates them into stems, works out their tempo, beat grid and key, decides how one has to be stretched and transposed to fit the other, and renders **song A's vocals over song B's instrumental**, locked to B's beats.
 
 **Listen:** [williskipsjr.github.io/EchoLabs](https://williskipsjr.github.io/EchoLabs/) plays two Creative Commons tracks from ccMixter mashed up in both directions. Each one is shown twice, with EchoLabs and as a naive overlay, along with what was done to the audio and its provenance manifest.
