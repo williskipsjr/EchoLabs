@@ -118,7 +118,10 @@ def _tempo_from_beats(beats: np.ndarray, fallback: float = 120.0) -> float:
 
 @lru_cache(maxsize=1)
 def _beat_this():
-    from beat_this.inference import Audio2Beats
+    try:
+        from beat_this.inference import Audio2Beats
+    except ImportError as e:
+        raise ImportError("tracker='beatthis' needs the neural extra: uv sync --extra neural") from e
 
     return Audio2Beats(checkpoint_path="final0", device="cpu", dbn=False)
 
