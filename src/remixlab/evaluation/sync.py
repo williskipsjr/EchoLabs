@@ -24,7 +24,8 @@ import musdb
 import numpy as np
 from tqdm import tqdm
 
-from .. import analyze, audio as A, match, remix
+from .. import analyze, match, remix
+from .. import audio as A
 
 STEMS = ("drums", "bass", "other", "vocals")
 

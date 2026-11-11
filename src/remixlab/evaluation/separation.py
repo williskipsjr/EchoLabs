@@ -18,8 +18,8 @@ import time
 from pathlib import Path
 
 import librosa
-import museval
 import musdb
+import museval
 import numpy as np
 from tqdm import tqdm
 

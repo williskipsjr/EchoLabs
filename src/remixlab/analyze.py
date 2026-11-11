@@ -88,14 +88,16 @@ def estimate_key(harmonic: np.ndarray, sr: int = A.SR, profile: str = "krumhansl
             r = np.corrcoef(mean, np.roll(prof, tonic))[0, 1]
             scores.append((r, tonic, mode))
     scores.sort(reverse=True)
-    (best, tonic, mode), (second, *_ ) = scores[0], scores[1]
+    (best, tonic, mode), (second, *_) = scores[0], scores[1]
     return Key(tonic, mode, float(best - second))
 
 
 def track_beats(drums: np.ndarray, sr: int = A.SR, start_bpm: float = 120.0, hop: int = 256) -> tuple[float, np.ndarray]:
     y = librosa.resample(A.to_mono(drums), orig_sr=sr, target_sr=22050)
     onset_env = librosa.onset.onset_strength(y=y, sr=22050, hop_length=hop, aggregate=np.median)
-    tempo, frames = librosa.beat.beat_track(onset_envelope=onset_env, sr=22050, hop_length=hop, start_bpm=start_bpm, units="frames")
+    tempo, frames = librosa.beat.beat_track(
+        onset_envelope=onset_env, sr=22050, hop_length=hop, start_bpm=start_bpm, units="frames"
+    )
     beats = librosa.frames_to_time(frames, sr=22050, hop_length=hop)
     tempo = float(np.atleast_1d(tempo)[0])
     # Tempo = slope of a straight line through the beat times. Individual beat

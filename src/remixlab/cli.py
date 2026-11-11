@@ -5,10 +5,11 @@ from __future__ import annotations
 import argparse
 import json
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
-from . import __version__, analyze, audio as A, match, remix, separate
+from . import __version__, analyze, match, remix, separate
+from . import audio as A
 
 AUDIO_EXT = {".mp3", ".wav", ".flac", ".ogg", ".m4a"}
 
@@ -28,8 +29,10 @@ def cmd_rank(args) -> None:
     files = sorted(p for p in Path(args.folder).iterdir() if p.suffix.lower() in AUDIO_EXT)
     analyses = {p.name: _analyse(p)[1] for p in files}
     for vocals, beat, m in match.rank_pairs(analyses)[: args.top]:
-        print(f"{m.score:.2f}  vocals: {vocals:30s} beat: {beat:30s}  "
-              f"stretch x{m.stretch:.3f}  shift {m.semitones:+d} st  key {m.key_relation}")
+        print(
+            f"{m.score:.2f}  vocals: {vocals:30s} beat: {beat:30s}  "
+            f"stretch x{m.stretch:.3f}  shift {m.semitones:+d} st  key {m.key_relation}"
+        )
 
 
 def cmd_mashup(args) -> None:
@@ -45,7 +48,7 @@ def cmd_mashup(args) -> None:
     # Provenance: who the music came from and exactly what was done to it.
     manifest = {
         "generated_by": f"RemixLab {__version__}",
-        "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "created_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "ai_generated_derivative": True,
         "sources": {
             "vocals": {"file": a_path.name, "sha1_16": separate._file_hash(a_path), "analysis": a.summary()},
