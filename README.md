@@ -4,7 +4,7 @@
 
 Give EchoLabs two songs. It separates them into stems, works out their tempo, beat grid and key, decides how one has to be stretched and transposed to fit the other, and renders **song A's vocals over song B's instrumental**, locked to B's beats.
 
-**Try it:** [live demo on Hugging Face Spaces](https://huggingface.co/spaces/mairrack/EchoLabs). It includes one-click examples that mash up two Creative Commons tracks from ccMixter, in both beat-warp and naive-overlay modes, so you can hear the difference.
+**Listen:** [williskipsjr.github.io/EchoLabs](https://williskipsjr.github.io/EchoLabs/) plays two Creative Commons tracks from ccMixter mashed up in both directions. Each one is shown twice, with EchoLabs and as a naive overlay, along with what was done to the audio and its provenance manifest.
 
 ```
 song A ─┐                     ┌─ tempo, beats, downbeat ─┐
@@ -99,7 +99,9 @@ A Gradio app in [`space/`](space/) lets anyone upload two songs and download the
 uv run --extra demo python space/app.py   # http://localhost:7860
 ```
 
-Deploy it to a Hugging Face Space (Gradio SDK, free CPU tier) with `uv run hf auth login` then `uv run python scripts/deploy_space.py`.
+To host it on a Hugging Face Space (Gradio Spaces now need a PRO plan): run `uv run hf auth login`, then `uv run python scripts/deploy_space.py`.
+
+The static listening page in [`site/`](site/) is regenerated with `uv run python scripts/build_site.py` and published to GitHub Pages by `.github/workflows/pages.yml`.
 
 Reproduce the evaluations:
 
