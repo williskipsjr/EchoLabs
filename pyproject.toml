@@ -47,6 +47,9 @@ dev = [
 echolabs = "echolabs.cli:main"
 
 [project.optional-dependencies]
+demo = [
+    "gradio>=6.31.0",
+]
 neural = [
     "beat-this>=1.1",
 ]
