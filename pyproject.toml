@@ -8,7 +8,6 @@ authors = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "beat-this>=1.1",
     "demucs>=4.0.1",
     "librosa>=0.11.0",
     "mir-eval>=0.8.2",
@@ -46,6 +45,11 @@ dev = [
 
 [project.scripts]
 echolabs = "echolabs.cli:main"
+
+[project.optional-dependencies]
+neural = [
+    "beat-this>=1.1",
+]
 
 [tool.ruff]
 line-length = 130

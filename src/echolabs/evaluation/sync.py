@@ -146,7 +146,7 @@ def main() -> None:
     p.add_argument("--root", default="data/musdb18_sample")
     p.add_argument("--pairs", type=int, default=100)
     p.add_argument("--seed", type=int, default=0)
-    p.add_argument("--trackers", nargs="+", choices=analyze.TRACKERS, default=list(analyze.TRACKERS))
+    p.add_argument("--trackers", nargs="+", choices=analyze.TRACKERS, default=["librosa"])
     p.add_argument("--ceiling-tracks", type=int, default=30)
     p.add_argument("--out", type=Path, default=Path("results/sync.json"))
     args = p.parse_args()

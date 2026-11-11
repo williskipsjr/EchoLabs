@@ -826,7 +826,6 @@ name = "echolabs"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "beat-this" },
     { name = "demucs", version = "4.0.1", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine == 'x86_64' and sys_platform == 'darwin'" },
     { name = "demucs", version = "4.1.0", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine != 'x86_64' or sys_platform != 'darwin'" },
     { name = "librosa", version = "0.11.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
@@ -847,6 +846,11 @@ dependencies = [
     { name = "transformers" },
 ]
 
+[package.optional-dependencies]
+neural = [
+    { name = "beat-this" },
+]
+
 [package.dev-dependencies]
 dev = [
     { name = "mirdata" },
@@ -856,7 +860,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "beat-this", specifier = ">=1.1" },
+    { name = "beat-this", marker = "extra == 'neural'", specifier = ">=1.1" },
     { name = "demucs", specifier = ">=4.0.1" },
     { name = "librosa", specifier = ">=0.11.0" },
     { name = "mir-eval", specifier = ">=0.8.2" },
@@ -871,6 +875,7 @@ requires-dist = [
     { name = "tqdm", specifier = ">=4.70.1" },
     { name = "transformers", specifier = ">=4.44" },
 ]
+provides-extras = ["neural"]
 
 [package.metadata.requires-dev]
 dev = [
