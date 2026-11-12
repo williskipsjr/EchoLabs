@@ -61,9 +61,5 @@ Brief: a landing page that sells EchoLabs and tells, while scrolling, how it wor
 - [x] Removed the old generated `site/index.html`. **The live GitHub Pages site still serves the previous page from `main` until this branch merges.**
 - [x] Hand-write `site/index.html`, `site/styles.css`, `site/main.js` following the plan above. Step 4 became an offsets chart: the per-beat stretch on this pair is too small to see on the waveform, but naive drifts to 70 ms and global wobbles by up to ±34 ms.
 - [x] Self-critique with headless-Chrome screenshots at 1440 px and 375 px. Fixes: wheel label collisions, chart scale, footer wordmark, phone-sized scene text, and a version switch that keeps the playhead.
-- [ ] Restyle the Gradio app (`space/app.py`) using the same tokens:
-  - `gr.themes.Base` with Bricolage Grotesque;
-  - "deck" panels for song A (vocals) and song B (instrumental);
-  - a result card with chips;
-  - `gr.WaveformOptions` in the stem colours.
-- [ ] One PR per part (landing page, app UI), each merged only after green CI.
+- [x] Restyle the Gradio app (`space/app.py`) with the same tokens: Bricolage theme, stem-coloured decks, a result card with chips, waveform in stem colours, step-by-step progress in one place, and inline validation (#14).
+- [x] One PR per part, each merged only after green CI. The UI/UX Pro Max audit was #13 (squash-merged from then on).
