@@ -44,7 +44,13 @@
       <span class="line" aria-hidden="true">Drop them on another.</span>
     </h1>
     <div class="hero-grid">
-      <p class="lede">EchoLabs splits two songs into stems, stretches the vocals beat by beat onto the other song's instrumental and shifts them into a matching key. Every mashup comes with a receipt of exactly what was changed.</p>
+      <div class="hero-copy">
+        <p class="lede">EchoLabs splits two songs into stems, stretches the vocals beat by beat onto the other song's instrumental and shifts them into a matching key. Every mashup comes with a receipt of exactly what was changed.</p>
+        <div class="hero-cta">
+          <a class="button" href="#run">Make your own mashup</a>
+          <a class="button secondary" href="#how">See how it works</a>
+        </div>
+      </div>
 
       <div class="player" id="listen" aria-label="Mashup player">
         <div class="pairs" role="tablist" aria-label="Song pair"></div>
@@ -124,9 +130,9 @@
           <h3>Warp beat by beat</h3>
           <p>Real drummers drift. Instead of stretching the whole vocal by one number, EchoLabs stretches every beat onto the matching beat of the new song. <span data-fill="warp-summary">Here each beat gets its own stretch.</span></p>
           <ul class="legend lines">
-            <li><i style="--c: var(--muted)"></i>Naive overlay</li>
-            <li><i style="--c: var(--other)"></i>One global stretch</li>
-            <li><i style="--c: var(--vocals)"></i>EchoLabs beat-warp</li>
+            <li><svg viewBox="0 0 28 8" aria-hidden="true"><line x1="2" x2="26" y1="4" y2="4" stroke="var(--muted)" stroke-width="2.5" stroke-dasharray="7 4"/></svg>Naive overlay, dashed</li>
+            <li><svg viewBox="0 0 28 8" aria-hidden="true"><line x1="2" x2="26" y1="4" y2="4" stroke="var(--other)" stroke-width="3" stroke-dasharray="0.1 5" stroke-linecap="round"/></svg>One global stretch, dotted</li>
+            <li><svg viewBox="0 0 28 8" aria-hidden="true"><line x1="2" x2="26" y1="4" y2="4" stroke="var(--vocals)" stroke-width="4"/></svg>EchoLabs beat-warp, solid</li>
           </ul>
         </li>
         <li class="step" data-step="4">
