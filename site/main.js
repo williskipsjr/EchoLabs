@@ -109,13 +109,13 @@ function player(clips) {
     const played = (a.currentTime || 0) / dur;
     const styles = getComputedStyle(document.documentElement);
     const text = styles.getPropertyValue("--text").trim();
-    const line = styles.getPropertyValue("--line").trim();
+    const rest = styles.getPropertyValue("--wave-rest").trim();
     const vocals = styles.getPropertyValue("--vocals").trim();
     const step = w / peaks.length;
     const barW = Math.max(1, step * 0.62);
     peaks.forEach((p, i) => {
       const bh = Math.max(2, p * (h - 14));
-      ctx.fillStyle = i / peaks.length < played ? text : line;
+      ctx.fillStyle = i / peaks.length < played ? text : rest;
       ctx.fillRect(i * step, (h - bh) / 2, barW, bh);
     });
     const vx = (t.vocals_enter_s / dur) * w;
@@ -128,7 +128,7 @@ function player(clips) {
   function sync() {
     const a = current();
     seek.value = a.currentTime || 0;
-    timeEl.textContent = fmtTime(a.currentTime || 0);
+    timeEl.textContent = `${fmtTime(a.currentTime || 0)} / ${fmtTime(a.duration || 30)}`;
     playBtn.setAttribute("aria-pressed", !a.paused);
     playBtn.setAttribute("aria-label", a.paused ? "Play" : "Pause");
     draw();
@@ -194,7 +194,8 @@ function player(clips) {
     const a = current();
     if (a.paused) {
       a.preload = "auto";
-      a.play().then(loop).catch(() => {});
+      if (a.readyState < 3) busy(true);
+      a.play().then(loop).catch(() => busy(false));
       warmOther();
     } else {
       a.pause();
@@ -213,8 +214,15 @@ function player(clips) {
     }
     sync();
   });
+  const busy = (on) => playBtn.setAttribute("aria-busy", on ? "true" : "false");
   for (const pairAudios of audios) {
-    for (const a of Object.values(pairAudios)) a.addEventListener("ended", sync);
+    for (const a of Object.values(pairAudios)) {
+      a.addEventListener("ended", sync);
+      a.addEventListener("waiting", () => a === current() && busy(true));
+      a.addEventListener("playing", () => a === current() && busy(false));
+      a.addEventListener("pause", () => a === current() && busy(false));
+      a.addEventListener("error", () => a === current() && busy(false));
+    }
   }
   new ResizeObserver(draw).observe(canvas);
   renderFacts();
@@ -317,10 +325,14 @@ function story(data) {
   el("text", { x: X0 + W - 10, y: CH_Y + 80 * MS + 14, class: "sc-small", "text-anchor": "end" }, chart).textContent = "within ±20 ms sounds like one hit";
   el("text", { x: X0, y: CH_Y - 80 * MS - 16, class: "sc-label" }, chart).textContent = "Where each sung beat lands, in ms from the new beat";
   const series = {};
-  const seriesStyle = { naive: { stroke: "var(--muted)" }, global: { stroke: "var(--other)" }, warp: { stroke: "var(--vocals)" } };
+  const seriesStyle = {
+    naive: { stroke: "var(--muted)", dash: "14 9", width: 2.5 },
+    global: { stroke: "var(--other)", dash: "0.1 9", width: 4, cap: "round" },
+    warp: { stroke: "var(--vocals)", dash: "none", width: 4.5 },
+  };
   // The key for these lines lives in the step-4 text (HTML), so it stays readable on phones.
   for (const [k, s] of Object.entries(seriesStyle)) {
-    series[k] = el("polyline", { fill: "none", stroke: s.stroke, "stroke-width": k === "warp" ? 4 : 2.5, "stroke-linejoin": "round" }, chart);
+    series[k] = el("polyline", { fill: "none", stroke: s.stroke, "stroke-width": s.width, "stroke-dasharray": s.dash, "stroke-linecap": s.cap || "butt", "stroke-linejoin": "round" }, chart);
   }
   const pts = (vals) => data.warp.out.map((t, i) => `${xs(t).toFixed(1)},${(CH_Y - clamp(vals[i], -80, 80) * MS).toFixed(1)}`).join(" ");
 
