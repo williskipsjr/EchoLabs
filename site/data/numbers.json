@@ -1,0 +1,56 @@
+{
+ "separation": {
+  "n": 50,
+  "htdemucs": {
+   "vocals": 9.06,
+   "drums": 9.46,
+   "bass": 9.45,
+   "other": 5.69,
+   "accompaniment": 13.7
+  },
+  "repet_sim": {
+   "vocals": 1.81,
+   "accompaniment": 4.63
+  },
+  "oracle": {
+   "vocals": 10.74,
+   "drums": 9.08,
+   "bass": 7.7,
+   "other": 7.64
+  },
+  "realtime_factor_cpu": 0.82
+ },
+ "sync": {
+  "n": 100,
+  "f": {
+   "naive": 0.365,
+   "global": 0.525,
+   "beatwarp": 0.591
+  },
+  "ceiling": 0.706,
+  "beatthis_beatwarp": 0.518,
+  "clash": {
+   "naive": 0.89,
+   "beatwarp": 0.34
+  }
+ },
+ "key": {
+  "n": 566,
+  "full_mix/krumhansl": {
+   "mirex_weighted": 0.571,
+   "exact_accuracy": 0.498
+  },
+  "full_mix/temperley": {
+   "mirex_weighted": 0.416,
+   "exact_accuracy": 0.334
+  },
+  "harmonic/krumhansl": {
+   "mirex_weighted": 0.588,
+   "exact_accuracy": 0.511
+  },
+  "harmonic/temperley": {
+   "mirex_weighted": 0.456,
+   "exact_accuracy": 0.375
+  }
+ }
+}
