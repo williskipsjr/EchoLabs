@@ -3,99 +3,217 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EchoLabs: stem-aware AI mashups</title>
-<meta name="description" content="Listen to EchoLabs mashups: Demucs stem separation, beat-by-beat warping and key-matched transposition, compared with a naive overlay.">
-<style>
-  :root { --bg:#fafaf9; --fg:#1c1917; --muted:#57534e; --card:#ffffff; --line:#e7e5e4; --accent:#4f46e5; --bad:#b91c1c; --chip:#f5f5f4; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg:#0c0a09; --fg:#f5f5f4; --muted:#a8a29e; --card:#1c1917; --line:#292524; --accent:#a5b4fc; --bad:#fca5a5; --chip:#292524; }
-  }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  main { max-width: 980px; margin: 0 auto; padding: 40px 16px 64px; }
-  h1 { font-size: 2rem; margin: 0 0 4px; letter-spacing: -0.02em; }
-  .lede { color: var(--muted); margin: 0 0 20px; max-width: 70ch; }
-  .links a { display:inline-block; margin: 0 8px 8px 0; padding: 8px 14px; border:1px solid var(--line); border-radius: 8px; color: var(--fg); text-decoration:none; background: var(--card); }
-  .links a.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-  .card { background: var(--card); border:1px solid var(--line); border-radius: 12px; padding: 20px; margin: 20px 0; }
-  h2 { font-size: 1.1rem; margin: 0 0 14px; }
-  .x { color: var(--muted); }
-  .takes { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-  .take { border:1px solid var(--line); border-radius: 10px; padding: 14px; }
-  .take.beatwarp { border-color: var(--accent); }
-  h3 { font-size: .95rem; margin: 0 0 10px; }
-  audio { width: 100%; }
-  .chips { list-style:none; padding:0; margin: 10px 0 8px; display:flex; flex-wrap: wrap; gap: 6px; }
-  .chip { background: var(--chip); border-radius: 999px; padding: 2px 10px; font-size: .82rem; }
-  .chip.bad { color: var(--bad); }
-  .small { font-size: .82rem; color: var(--muted); }
-  .table-wrap { overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; font-size: .92rem; }
-  td { text-align:left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; }
-  footer { color: var(--muted); font-size: .85rem; }
-  a { color: var(--accent); }
-</style>
+<title>EchoLabs: AI mashups that land on the beat</title>
+<meta name="description" content="EchoLabs splits two songs into stems, warps one song's vocals beat by beat onto the other's instrumental and shifts them into a matching key. Listen, see how it works, and check the benchmarks.">
+<meta property="og:title" content="EchoLabs: AI mashups that land on the beat">
+<meta property="og:description" content="Stem separation, beat-by-beat warping and key matching, measured on public benchmarks.">
+<meta name="theme-color" content="#12193A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="main.js" defer></script>
 </head>
 <body>
-<main>
-  <h1>EchoLabs</h1>
-  <p class="lede">Stem-aware AI mashups. EchoLabs separates two songs with Demucs, finds tempo, beats and key, then stretches one song's vocals <em>beat by beat</em> onto the other's instrumental and transposes them to a compatible key. Each pair below is played twice: once with EchoLabs and once as a naive overlay with no sync and no transposition.</p>
-  <p class="links">
-    <a class="primary" href="https://colab.research.google.com/github/williskipsjr/EchoLabs/blob/main/notebooks/echolabs_demo.ipynb">Try it with your own songs (Colab)</a>
-    <a href="https://github.com/williskipsjr/EchoLabs">Code &amp; benchmarks on GitHub</a>
-  </p>
+<a class="skip" href="#listen">Skip to the player</a>
 
-    <section class="card">
-      <h2>Gabriel Shellington's vocals <span class="x">×</span> MalreDeszik's beat</h2>
-      <div class="takes">
-        <div class="take beatwarp">
-          <h3>Beat-warp + transpose</h3>
-          <audio controls preload="none" src="audio/gabriel_vocals_x_malre_beat_beatwarp.mp3"></audio>
-          <ul class="chips"><li class="chip">140 → 142 BPM</li><li class="chip">G minor → E minor</li><li class="chip">stretch ×1.013</li><li class="chip">-3 semitones</li><li class="chip">keys: same</li><li class="chip">59 beat segments</li></ul>
-          <a class="small" href="audio/gabriel_vocals_x_malre_beat_beatwarp.json">provenance manifest</a>
-        </div>
-        <div class="take naive">
-          <h3>Naive overlay</h3>
-          <audio controls preload="none" src="audio/gabriel_vocals_x_malre_beat_naive.mp3"></audio>
-          <ul class="chips"><li class="chip">140 → 142 BPM</li><li class="chip">G minor → E minor</li><li class="chip">stretch ×1.000</li><li class="chip">no pitch shift</li><li class="chip bad">keys: clash</li></ul>
-          <a class="small" href="audio/gabriel_vocals_x_malre_beat_naive.json">provenance manifest</a>
-        </div>
-      </div>
-    </section>
-    <section class="card">
-      <h2>MalreDeszik's vocals <span class="x">×</span> Gabriel Shellington's beat</h2>
-      <div class="takes">
-        <div class="take beatwarp">
-          <h3>Beat-warp + transpose</h3>
-          <audio controls preload="none" src="audio/malre_vocals_x_gabriel_beat_beatwarp.mp3"></audio>
-          <ul class="chips"><li class="chip">142 → 140 BPM</li><li class="chip">E minor → G minor</li><li class="chip">stretch ×0.988</li><li class="chip">+3 semitones</li><li class="chip">keys: same</li><li class="chip">51 beat segments</li></ul>
-          <a class="small" href="audio/malre_vocals_x_gabriel_beat_beatwarp.json">provenance manifest</a>
-        </div>
-        <div class="take naive">
-          <h3>Naive overlay</h3>
-          <audio controls preload="none" src="audio/malre_vocals_x_gabriel_beat_naive.mp3"></audio>
-          <ul class="chips"><li class="chip">142 → 140 BPM</li><li class="chip">E minor → G minor</li><li class="chip">stretch ×1.000</li><li class="chip">no pitch shift</li><li class="chip bad">keys: clash</li></ul>
-          <a class="small" href="audio/malre_vocals_x_gabriel_beat_naive.json">provenance manifest</a>
-        </div>
-      </div>
-    </section>
+<header class="nav">
+  <a class="brand" href="#top" aria-label="EchoLabs, back to top">
+    <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="2" y="7" width="3.2" height="10" rx="1.6" fill="var(--vocals)"/>
+      <rect x="7.6" y="3" width="3.2" height="18" rx="1.6" fill="var(--drums)"/>
+      <rect x="13.2" y="9" width="3.2" height="6" rx="1.6" fill="var(--bass)"/>
+      <rect x="18.8" y="5" width="3.2" height="14" rx="1.6" fill="var(--other)"/>
+    </svg>
+    EchoLabs
+  </a>
+  <nav aria-label="Sections">
+    <a href="#listen">Listen</a>
+    <a href="#how">How it works</a>
+    <a href="#results">Results</a>
+    <a href="#run">Run it</a>
+    <a href="https://github.com/williskipsjr/EchoLabs">GitHub</a>
+  </nav>
+</header>
 
-  <section class="card">
-    <h2>Measured, not eyeballed</h2>
-    <div class="table-wrap"><table>
-      <tr><td>Vocal separation (MUSDB18, 50 clips)</td><td class="num">9.06 dB SDR</td><td>vs 1.81 dB for a classic DSP separator</td></tr>
-      <tr><td>Beat alignment (100 song pairs)</td><td class="num">F = 0.591</td><td>beat-warp vs 0.525 global stretch and 0.365 naive; the judge's own ceiling is 0.706</td></tr>
-      <tr><td>Key clashes (Camelot wheel)</td><td class="num">89% → 34%</td><td>naive overlay vs transposed</td></tr>
-      <tr><td>Key detection (GiantSteps, 566 tracks)</td><td class="num">0.588 MIREX</td><td>classic template baseline; learned models reach about 0.74</td></tr>
-    </table></div>
+<main id="top">
+  <section class="hero">
+    <h1 class="kinetic" aria-label="Lift the vocals from one song. Drop them on another.">
+      <span class="line" aria-hidden="true">Lift the vocals</span>
+      <span class="line" aria-hidden="true">from one song.</span>
+      <span class="line" aria-hidden="true">Drop them on another.</span>
+    </h1>
+    <div class="hero-grid">
+      <p class="lede">EchoLabs splits two songs into stems, stretches the vocals beat by beat onto the other song's instrumental and shifts them into a matching key. Every mashup comes with a receipt of exactly what was changed.</p>
+
+      <div class="player" id="listen" aria-label="Mashup player">
+        <div class="pairs" role="tablist" aria-label="Song pair"></div>
+        <div class="deck">
+          <button class="play" type="button" aria-label="Play">
+            <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
+            <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4.5v16H6zM13.5 4H18v16h-4.5z"/></svg>
+          </button>
+          <div class="wave-wrap">
+            <canvas class="wave" aria-hidden="true"></canvas>
+            <input class="seek" type="range" min="0" max="30" step="0.1" value="0" aria-label="Playback position">
+          </div>
+          <span class="time" aria-live="off">0:00</span>
+        </div>
+        <div class="versions" role="radiogroup" aria-label="Version">
+          <button type="button" role="radio" aria-checked="true" data-mode="beatwarp">With EchoLabs</button>
+          <button type="button" role="radio" aria-checked="false" data-mode="naive">Naive overlay</button>
+        </div>
+        <ul class="facts" aria-live="polite"></ul>
+        <p class="hint">Switch versions while it plays. The song keeps its place, so you hear only the difference.</p>
+      </div>
+    </div>
   </section>
 
-  <footer>
-    <p>Example songs are used under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; the clips above are remixed excerpts made by EchoLabs:</p>
-    <ul><li>“EL MANNY QUIERE MONEY” by Gabriel Shellington (<a href="https://ccmixter.org/files/gabriel_shelligton/71296">ccMixter</a>)</li><li>“Same block, new bodies (ft. Synomo, IAComplexe)” by MalreDeszik (<a href="https://ccmixter.org/files/MalreDeszik/71346">ccMixter</a>)</li></ul>
-    <p>Every mashup ships with a provenance manifest naming its sources and every transformation applied. Only remix music you have the rights to use.</p>
-  </footer>
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>Demucs stem separation</span><i></i>
+      <span>beat-by-beat time warping</span><i></i>
+      <span>Camelot key matching</span><i></i>
+      <span>a provenance receipt on every render</span><i></i>
+      <span>benchmarked on MUSDB18 and GiantSteps</span><i></i>
+      <span>runs on a laptop CPU</span><i></i>
+      <span>Demucs stem separation</span><i></i>
+      <span>beat-by-beat time warping</span><i></i>
+      <span>Camelot key matching</span><i></i>
+      <span>a provenance receipt on every render</span><i></i>
+      <span>benchmarked on MUSDB18 and GiantSteps</span><i></i>
+      <span>runs on a laptop CPU</span><i></i>
+    </div>
+  </div>
+
+  <section class="story" id="how" aria-labelledby="how-title">
+    <div class="story-head">
+      <h2 id="how-title">How a mashup gets made</h2>
+      <p>Scroll through one real run: the first four bars of Gabriel Shellington's vocals landing on MalreDeszik's beat. Every line in the picture is the actual audio and the actual beat grid.</p>
+    </div>
+    <div class="story-body">
+      <div class="stage">
+        <svg id="scene" viewBox="0 0 1000 620" role="img" aria-labelledby="scene-desc">
+          <desc id="scene-desc">Diagram of the EchoLabs pipeline on a real song: separation into four stems, beat and key analysis, key matching on the Camelot wheel, beat-by-beat warping of the vocals onto the new beat grid, and the final mix.</desc>
+        </svg>
+      </div>
+      <ol class="steps">
+        <li class="step" data-step="0">
+          <span class="num">01</span>
+          <h3>Separate</h3>
+          <p>A neural network called Demucs pulls each song apart into four stems: vocals, drums, bass and everything else.</p>
+          <ul class="legend">
+            <li><i style="--c: var(--vocals)"></i>Vocals</li>
+            <li><i style="--c: var(--drums)"></i>Drums</li>
+            <li><i style="--c: var(--bass)"></i>Bass</li>
+            <li><i style="--c: var(--other)"></i>Everything else</li>
+          </ul>
+        </li>
+        <li class="step" data-step="1">
+          <span class="num">02</span>
+          <h3>Find the beat and the key</h3>
+          <p>Beats are tracked on the drums alone, so the singing can't smear them. The key is read from the bass and harmony. <span data-fill="a-summary">This song: 140 BPM in G minor.</span></p>
+        </li>
+        <li class="step" data-step="2">
+          <span class="num">03</span>
+          <h3>Match the keys</h3>
+          <p><span data-fill="match-summary">The other song is in E minor.</span> On the Camelot wheel, the DJ's map of keys that blend, the vocals need to move to the same spot, so EchoLabs picks the smallest pitch shift that gets them there.</p>
+        </li>
+        <li class="step" data-step="3">
+          <span class="num">04</span>
+          <h3>Warp beat by beat</h3>
+          <p>Real drummers drift. Instead of stretching the whole vocal by one number, EchoLabs stretches every beat onto the matching beat of the new song. <span data-fill="warp-summary">Here each beat gets its own stretch.</span></p>
+          <ul class="legend lines">
+            <li><i style="--c: var(--muted)"></i>Naive overlay</li>
+            <li><i style="--c: var(--other)"></i>One global stretch</li>
+            <li><i style="--c: var(--vocals)"></i>EchoLabs beat-warp</li>
+          </ul>
+        </li>
+        <li class="step" data-step="4">
+          <span class="num">05</span>
+          <h3>Mix and credit</h3>
+          <p>The vocals sit on the new instrumental, which dips slightly in the mid-range while someone sings. Loudness is matched, and a receipt records both sources and every change.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="results" id="results" aria-labelledby="results-title">
+    <h2 id="results-title">Measured on public benchmarks</h2>
+    <p class="section-lede">Every number below comes from evaluation scripts in the repository, run on a laptop CPU. The ones that didn't go our way are here too.</p>
+
+    <div class="metric">
+      <div class="metric-copy">
+        <h3>Pulling the vocals out cleanly</h3>
+        <p>Signal-to-distortion ratio on the 50 MUSDB18 test clips. Higher means less of the band left in the vocal.</p>
+      </div>
+      <div class="bars" data-chart="separation"></div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-copy">
+        <h3>Landing on the beat</h3>
+        <p>Beat F-measure over 100 random song pairs. The dashed line is the best this test can score: warping a song onto itself reaches only that.</p>
+      </div>
+      <div class="bars" data-chart="sync"></div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-copy">
+        <h3>Avoiding key clashes</h3>
+        <p>Share of those pairs whose keys clash after mixing, measured on the finished audio.</p>
+      </div>
+      <div class="bars" data-chart="clash"></div>
+    </div>
+
+    <div class="limits">
+      <h3>What didn't work, and the limits</h3>
+      <ul>
+        <li data-fill="limit-beatthis">A newer neural beat tracker (Beat This!) did not beat the classic one in this test, so it stays optional.</li>
+        <li data-fill="limit-key">Key detection scores 0.588 on GiantSteps. Learned key models reach about 0.74, so this is a solid baseline, not the state of the art.</li>
+        <li>The benchmarks use 7-second clips, which makes the beat test noisy. That is why the ceiling is shown.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="credit" aria-labelledby="credit-title">
+    <div class="credit-copy">
+      <h2 id="credit-title">Credit travels with the mix</h2>
+      <p>A mashup is built on other people's work. Every render writes a provenance file that names both source recordings by file hash, lists what was detected and what was changed, and marks the result as AI-generated.</p>
+      <p>The app won't start a mashup until you confirm you have the rights to both songs. The demo uses two Creative Commons tracks from ccMixter.</p>
+    </div>
+    <figure class="receipt" aria-label="Provenance receipt for the demo mashup">
+      <figcaption>provenance.json</figcaption>
+      <dl class="receipt-body"></dl>
+    </figure>
+  </section>
+
+  <section class="run" id="run" aria-labelledby="run-title">
+    <h2 id="run-title">Make your own</h2>
+    <div class="run-grid">
+      <div class="run-path">
+        <h3>In your browser</h3>
+        <p>Open the notebook in Google Colab, run it, and you get a link to the full app. Upload two songs and download the mashup with its receipt. A free Colab GPU takes about a minute per mashup.</p>
+        <a class="button" href="https://colab.research.google.com/github/williskipsjr/EchoLabs/blob/main/notebooks/echolabs_demo.ipynb">Open in Colab</a>
+      </div>
+      <div class="run-path">
+        <h3>On your machine</h3>
+        <p>Python 3.11 and <a href="https://docs.astral.sh/uv/">uv</a>. No GPU needed.</p>
+<pre><code>git clone https://github.com/williskipsjr/EchoLabs
+cd EchoLabs &amp;&amp; uv sync
+uv run echolabs mashup vocals.mp3 beat.mp3 -o mashup.wav</code></pre>
+      </div>
+    </div>
+  </section>
 </main>
+
+<footer class="footer">
+  <p class="wordmark" aria-hidden="true">EchoLabs</p>
+  <div class="stem-rule" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="footer-grid">
+    <p>Demo songs used under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>: “EL MANNY QUIERE MONEY” by Gabriel Shellington (<a href="https://ccmixter.org/files/gabriel_shelligton/71296">ccMixter</a>) and “Same block, new bodies” by MalreDeszik, ft. Synomo and IAComplexe (<a href="https://ccmixter.org/files/MalreDeszik/71346">ccMixter</a>). The clips on this page are remixed excerpts made by EchoLabs.</p>
+    <p>Built by <a href="https://github.com/williskipsjr">Willis Kipgen</a>. Code, method and raw results on <a href="https://github.com/williskipsjr/EchoLabs">GitHub</a>.</p>
+  </div>
+</footer>
 </body>
 </html>
