@@ -101,7 +101,7 @@ uv run --extra demo python space/app.py   # http://localhost:7860
 
 To host it on a Hugging Face Space (Gradio Spaces now need a PRO plan): run `uv run hf auth login`, then `uv run python scripts/deploy_space.py`.
 
-The static listening page in [`site/`](site/) is regenerated with `uv run python scripts/build_site.py` and published to GitHub Pages by `.github/workflows/pages.yml`.
+The landing page in [`site/`](site/) is hand-written HTML, CSS and JavaScript. Everything it plays and plots (audio excerpts, real stems and beat grids for the scroll story, benchmark numbers) is generated from real runs by `uv run python scripts/build_site.py`. GitHub Pages publishes it through `.github/workflows/pages.yml`.
 
 Reproduce the evaluations:
 

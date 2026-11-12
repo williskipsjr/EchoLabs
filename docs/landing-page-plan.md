@@ -59,8 +59,8 @@ Brief: a landing page that sells EchoLabs and tells, while scrolling, how it wor
 - [x] Picked and reviewed the design skill (`anthropics/skills@frontend-design`) and studied the reference site.
 - [x] `scripts/build_site.py` now emits only data and audio: `site/audio/*`, `site/data/{clips,story,numbers}.json`.
 - [x] Removed the old generated `site/index.html`. **The live GitHub Pages site still serves the previous page from `main` until this branch merges.**
-- [ ] Hand-write `site/index.html`, `site/styles.css`, `site/main.js` following the plan above.
-- [ ] Self-critique with screenshots at desktop and 375 px, in both colour schemes and with reduced motion.
+- [x] Hand-write `site/index.html`, `site/styles.css`, `site/main.js` following the plan above. Step 4 became an offsets chart: the per-beat stretch on this pair is too small to see on the waveform, but naive drifts to 70 ms and global wobbles by up to ±34 ms.
+- [x] Self-critique with headless-Chrome screenshots at 1440 px and 375 px. Fixes: wheel label collisions, chart scale, footer wordmark, phone-sized scene text, and a version switch that keeps the playhead.
 - [ ] Restyle the Gradio app (`space/app.py`) using the same tokens:
   - `gr.themes.Base` with Bricolage Grotesque;
   - "deck" panels for song A (vocals) and song B (instrumental);
