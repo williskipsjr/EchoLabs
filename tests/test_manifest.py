@@ -42,3 +42,21 @@ def test_plan_reports_the_stretch_actually_applied():
     glob = remix.make_plan(vocals, a, b, m, mode="global", intro_bars=1).summary()
     assert naive["mean_stretch_applied"] == 1.0 and naive["semitones"] == 0
     assert glob["mean_stretch_applied"] == round(m.stretch, 3)
+
+
+def test_mashup_reports_each_stage_in_order(monkeypatch, tmp_path):
+    """on_step must fire for every stage, in order, with non-decreasing progress."""
+    a, b = _analysis(100), _analysis(110)
+    stems = {k: np.zeros((2, 8 * SR), dtype=np.float32) for k in ("drums", "bass", "other", "vocals")}
+    calls = iter([(stems, a), (stems, b)])
+    monkeypatch.setattr(pipeline, "analyse_file", lambda path, max_seconds=None: next(calls))
+    for name in ("a.wav", "b.wav"):
+        (tmp_path / name).write_bytes(name.encode())
+
+    seen = []
+    result = pipeline.mashup(tmp_path / "a.wav", tmp_path / "b.wav", intro_bars=1, on_step=lambda f, m: seen.append((f, m)))
+
+    fractions = [f for f, _ in seen]
+    assert fractions == sorted(fractions) and fractions[0] == 0.0 and fractions[-1] < 1.0
+    assert [m.split()[0] for _, m in seen] == ["Separating", "Separating", "Matching", "Warping", "Writing"]
+    assert result.manifest["plan"]["mode"] == "beatwarp"
